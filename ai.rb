@@ -136,7 +136,7 @@ def map_mode data
       else
         near_threshold = 5
       end
-      near_item =  items.find { |item_pos| path_distance(floor, player_pos, item_pos) <= near_threshold }
+      near_item = items.find { |item_pos| path_distance(floor, player_pos, item_pos) <= near_threshold }
       if near_item
         goal_pos = near_item
         $logger.debug("アイテムに向かうぜ")
