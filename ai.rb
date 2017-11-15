@@ -1,7 +1,6 @@
 require 'json'
 require 'logger'
 require 'set'
-require_relative 'message'
 
 STDOUT.sync = true
 
@@ -90,15 +89,18 @@ def enough_hammers?(data)
   end
 end
 
+
+def player_pos(data)
+  return [data["player"]["pos"]["x"],
+          data["player"]["pos"]["y"]]
+end
+
 def shortcut_path(data, goal_pos)
-  _, _, path = data["blocks"].map {  |block|
+  return data["blocks"].map { |block|
     data1 = Marshal.restore Marshal.dump data
     data1["blocks"] = data["blocks"] - [block]
-    m = Message.new(data1)
-    path = solve_maze(m.floor_cells, m.player_pos, goal_pos)
-    [block, m, path]
-  }.min_by { |_, _, path| path.size }
-  return path
+    solve_maze(floor_cells(data1), player_pos(data1), goal_pos)
+  }.min_by(&:size)
 end
 
 def map_mode data
