@@ -2,14 +2,9 @@ require 'json'
 require 'logger'
 require 'set'
 
-STDOUT.sync = true
+module YoteMogeAI
 
-class Object
-  def progn
-    fail 'no block' unless block_given?
-    yield(self)
-  end
-end
+module_function
 
 def dungeon_dimensions(data)
   xmax, ymax = (data["walls"] + data["blocks"]).reduce([0,0]) { |(xmax, ymax), (x, y)|
@@ -43,11 +38,9 @@ VEC_TO_CMD = {
 }
 
 def vec_minus(v, u)
-  vec = v.progn do |x1, y1|
-    u.progn do |x0, y0|
-      [x1 - x0, y1 - y0]
-    end
-  end
+  x1, y1 = v
+  x0, y0 = u
+  return [x1 - x0, y1 - y0]
 end
 
 def path_distance(floor, player_pos, goal_pos)
@@ -330,7 +323,6 @@ def reconstruct_path(prev, goal)
 end
 
 def solve_maze(floor, start, goal)
-  #p [:start, start, :goal, goal]
   maze = Set.new(floor)
   queue = [start]
   visited = Set.new
@@ -367,6 +359,8 @@ def render_grid(cells: [], width: nil, height: nil, on_char: '*', off_char: '.')
 end
 
 def main
+  STDOUT.sync = true
+
   srand(0)
 
   log_file = File.open("log", "w")
@@ -414,6 +408,8 @@ rescue => e
   raise # re-raise
 end
 
+end # module YoteMogeAI
+
 if __FILE__ == $0
-  main
+  YoteMogeAI.main
 end
