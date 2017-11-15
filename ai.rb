@@ -7,27 +7,25 @@ module YoteMogeAI
 module_function
 
 def dungeon_dimensions(data)
-  xmax, ymax = (data["walls"] + data["blocks"]).reduce([0,0]) { |(xmax, ymax), (x, y)|
-    [ [xmax,x].max, [ymax,y].max ]
-  }
-  return [xmax+1, ymax+1]
+  xs, ys = (data["walls"] + data["blocks"]).transpose
+  return [xs.max + 1, ys.max + 1]
 end
 
 def floor_cells data
   fail 'not map data' unless data.has_key? "map"
-  non_floor = Set.new(data["walls"] + data["blocks"])
+  non_floor = Set.new(data["walls"] + data["blocks"] + data["ha2"])
+  # 誤ってハツネツに当たらないようにする。
 
   width, height = dungeon_dimensions(data)
-  floor = []
-  (0...width).each do |x|
-    (0...height).each do |y|
-      pt = [x, y]
-      unless non_floor.include? pt
-        floor << pt
+  return (0...width).flat_map { |x|
+    (0...height).flat_map { |y|
+      if non_floor.include?([x, y])
+        []
+      else
+        [[x, y]]
       end
-    end
-  end
-  return floor
+    }
+  }
 end
 
 VEC_TO_CMD = {
