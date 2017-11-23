@@ -325,6 +325,7 @@ def reconstruct_path(prev, goal)
   return path.reverse
 end
 
+# 幅優先探索。
 def solve_maze(floor, start, goal)
   maze = Set.new(floor)
   queue = [start]
