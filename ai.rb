@@ -86,9 +86,14 @@ def player_pos(data)
           data["player"]["pos"]["y"]]
 end
 
+def deep_copy(data)
+  return Marshal.restore Marshal.dump data
+end
+
+# 最も道程が短くなるように1つだけブロックを壊した時の経路を返す。
 def shortcut_path(data, goal_pos)
   return data["blocks"].map { |block|
-    data1 = Marshal.restore Marshal.dump data
+    data1 = deep_copy(data)
     data1["blocks"] = data["blocks"] - [block]
     solve_maze(floor_cells(data1), player_pos(data1), goal_pos)
   }.min_by(&:size)
