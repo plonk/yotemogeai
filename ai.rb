@@ -404,7 +404,7 @@ def main
     end
   end
   $logger.error("標準入力 EOF")
-rescue => e
+rescue RuntimeError, SystemStackError => e
   $logger.error(e.inspect)
   if e.backtrace
     $logger.error(e.backtrace.join("\n"))
