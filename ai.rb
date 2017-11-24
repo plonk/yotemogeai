@@ -255,6 +255,7 @@ def battle_mode data
   }
 
   # low_hp_threshold = proc { expected_damage(player, monsters_alive) * 2.0 }
+  damage_expectation = expected_damage(player, monsters) * 1.55
   $logger.debug("期待値 = #{expected_damage(player, monsters)}")
   if false
   elsif player["map-level"] == 100 && # 100階。ボス戦かもなので残り1体での回復省略はしない。
@@ -262,13 +263,15 @@ def battle_mode data
         player["hp"] < [player["maxhp"], 37].min
     puts "HEAL"
   elsif player["map-level"] >= 50 && # 50階〜99階
-        player["heal"] > 8 &&
-        player["hp"] < [player["maxhp"], 37].min
+        player["heal"] > 3 &&
+        player["hp"] < player["maxhp"] &&
+        player["hp"] <= damage_expectation &&
         two_or_more_monsters.()
     puts "HEAL"
   elsif player["heal"] > 0 &&
-        ((player["hp"] < player["maxhp"] * 0.40) ||
-         (player["agi"] == 0 && player["hp"] < player["maxhp"])) && # 素早さがない
+        ((player["hp"] <= damage_expectation) ||
+         (player["agi"] < 15)) && # 素早さがない
+        player["hp"] < player["maxhp"] &&
         two_or_more_monsters.()
     puts "HEAL"
   else
@@ -282,7 +285,7 @@ def battle_mode data
       most_dangerous = monsters_alive.max_by { |m|
         monster_weight(m)
       }
-      if most_dangerous["hp"] <= 4 && monsters_alive.size >= 2
+      if most_dangerous["hp"] <= [player["str"].div(6),1].max && monsters_alive.size >= 2
         a, b = monsters_alive.sort_by { |m|
           monster_weight(m)
         }.reverse.first(2)
