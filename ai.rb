@@ -233,7 +233,10 @@ def monster_expected_attack(player, monster)
 end
 
 def expected_damage(player, monsters)
-  monsters.map { |monster| monster_expected_attack(player, monster) }.inject(0, :+)
+  live_monsters = monsters.select { |m| m["hp"] > 0 }
+  return live_monsters.map { |monster|
+    monster_expected_attack(player, monster)
+  }.inject(0, :+)
 end
 
 def battle_mode data
