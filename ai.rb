@@ -103,7 +103,9 @@ def map_mode data
   floor = floor_cells(data)
   player_pos = [data["player"]["pos"]["x"], data["player"]["pos"]["y"]]
 
-  if data["player"]["hp"] < data["player"]["maxhp"]*0.40 && data["player"]["heal"] > 0
+  if (data["player"]["hp"] < data["player"]["maxhp"]*0.40 ||
+     data["player"]["agi"] < 15) &&
+     data["player"]["heal"] > 0
     puts "HEAL"
     return
   else
