@@ -375,7 +375,11 @@ def main
 
   srand(0)
 
-  log_file = File.open("log", "w")
+  if $DEBUG
+    log_file = File.open("log", "w")
+  else
+    log_file = File.open("/dev/null", "w")
+  end
   log_file.sync = true
   $logger = Logger.new(log_file)
   $logger.info "起動しました。"
