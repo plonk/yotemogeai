@@ -376,14 +376,12 @@ def main
   srand(0)
 
   log_file = File.open("log", "w")
-  input_file = File.open("input", "w")
   log_file.sync = true
   $logger = Logger.new(log_file)
   $logger.info "起動しました。"
   at_exit do
     $logger.info "終了します。"
     log_file.close
-    input_file.close
   end
 
   call_table = {
@@ -396,7 +394,6 @@ def main
   puts "予定地ＡＩ"
 
   while line = gets
-    input_file.write line
     json_data = JSON.parse(line)
     $logger.debug("Got: #{line.chomp}")
     processed = call_table.any? do |key, fn|
